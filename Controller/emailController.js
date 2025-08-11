@@ -4,9 +4,10 @@ const path = require('path');
 require('dotenv').config();
 const multer = require('multer');
 
+
 const sendEmail = async (req, res) => {
     try {
-        const toEmail  = req.body;
+        // const toEmail  = process.env.EMAIL_RECEIVER; // Use environment variable for recipient email
 
         // Render EJS template to HTML string
         const templatePath = path.join(__dirname, '../views/email.ejs');
@@ -14,26 +15,29 @@ const sendEmail = async (req, res) => {
 
         // Create transporter using Gmail SMTP with your Gmail email & password
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: process.env.SMTP_HOST,
+            port: 587, // or 465 for secure connection
+            secure: false, // true for 465, false for other ports
                 auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,  
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASSWORD, 
             },
-            tls: {
-                rejectUnauthorized: false
+            tls:{
+                rejectUnauthorized: false // Allow self-signed certificates
             }
         });
 
         const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: toEmail,
+            from: "shekhawatpss9783@gmail.com", 
+            to: "pushpendra97728@gmail.com",
             subject: 'Test Email with EJS Template',
-            html: html,
+            text: 'This is a test email sent using EJS template with Nodemailer.',
+            // html: html,
         };
 
         // Send mail
-        await transporter.sendMail(mailOptions);
-    
+        const response = await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully', response);
         res.status(200).json({ message: 'Email sent successfully' });
     } catch (err) {
         console.error('Error sending email:', err);
