@@ -10,7 +10,7 @@ const UserModel = sequelize.define('User', {
     },
     firstName: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
     },
     lastName: {
         type: DataTypes.STRING,
@@ -41,7 +41,7 @@ const UserModel = sequelize.define('User', {
         unique: true
     },
     password:{
-        type: DataTypes.STRING,
+        type: DataTypes.BLOB,
         allowNull: false,
         set(value) {
             const salt = bcrypt.genSaltSync(10); 
@@ -51,7 +51,9 @@ const UserModel = sequelize.define('User', {
     }
 }, {
     tableName: 'user-Model',
-    timestamps: false,
+    timestamps: true,
+    paranoid: true,           // Enables soft delete (adds deletedAt)
+    deletedAt: 'deletedAt', 
     
 });
 

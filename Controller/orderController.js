@@ -1,5 +1,6 @@
 const  Order = require('../Models/orderModel');
 const  Customer  = require('../Models/customerModel');
+const sequelize = require('../Config/database');
 
 //Create an order for a customer
 const createOrder = async (req, res) => {
@@ -20,7 +21,7 @@ const createOrder = async (req, res) => {
 //Get all orders
 const getOrders = async (req, res) => {
     try {
-        const orders = await Order.findAll({ include: Customer });
+        const [orders] = await sequelize.query('SELECT * FROM Orders');
         res.status(200).json(orders);
     } catch (err) {
         res.status(500).json({ message: 'Error fetching orders', error: err.message });

@@ -13,6 +13,19 @@ const getUser = async (req,res) => {
     }
 }
 
+const getUserWithDeleted = async (req, res) => {
+    try {
+        console.log('in getUserWithDeleted');
+        const users = await User.findAll({
+            paranoid: false // This includes soft-deleted rows
+        });
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ message: 'Error fetching users', error: error.message });
+    }
+};
+
 const getUserById = async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
@@ -54,6 +67,7 @@ const login = async (req,res) => {
 const postUser = async (req,res) => {
     console.log("in post");
     const { firstName, lastName, email , password, age, phone} = req.body;
+    console.log(firstName,lastName,email,password,age,phone);
     try {
         if( !firstName || !lastName  || !email || !password || !age  || !phone){
             return res
@@ -125,7 +139,8 @@ module.exports = {
     deleteUser,
     updateUser,
     login,
-    getAlluserWithPost
+    getAlluserWithPost,
+    getUserWithDeleted
 }
 
 

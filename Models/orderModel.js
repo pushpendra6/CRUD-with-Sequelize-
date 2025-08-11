@@ -19,6 +19,13 @@ const Order = sequelize.define('Order', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+
+    
+},{
+    tableName: 'Orders',
+    createdAt:true,
+    updatedAt:true,
+    
 });
 
 module.exports = Order;

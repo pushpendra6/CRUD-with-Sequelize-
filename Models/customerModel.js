@@ -26,6 +26,30 @@ const Customer = sequelize.define('Customer', {
             }               
         }
     },
+    isVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    }
+},{
+    timestamps: true,
+    paranoid: false,
+    deletedAt: 'deletedAt', 
+    // Model-level scopes
+    defaultScope: {
+        attributes: { exclude: ['deletedAt'] }
+    },
+    scopes: {
+        verified: {
+            where: { isVerified: true }
+        },
+        withEmailLike(emailPart) {
+            return {
+                where: {
+                    email: { [sequelize.Sequelize.Op.like]: `%${emailPart}%` }
+                }
+            }
+        }
+    }
 });
 
 module.exports = Customer;
