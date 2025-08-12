@@ -7,11 +7,11 @@ const { sequelize} = require('./Models/index')
 const postRoutes = require('./Routes/postRoutes');
 const app = express();
 const userRoute1 = require('./Routes/user1Routes');
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
+const paginationRoutes = require('./Routes/paginationRoutes');
 const emailRoute = require('./Routes/emailRoute');
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 
 app.use('/user', userRoutes);
@@ -21,14 +21,16 @@ app.use('/cart', cartRoutes);
 app.use('/order', orderRoutes);
 app.use('/user1',userRoute1);
 app.use('/upload', emailRoute);
+app.use('/pagination', paginationRoutes);
 
-// sequelize.sync({ alter : false }) 
-//     .then(() => {
-//         console.log('Database & tables created!');
-//     })
-//     .catch(err => {
-//         console.error('Unable to connect to the database or sync models:', err);
-//     });
+
+sequelize.sync() 
+    .then(() => {
+        console.log('Database & tables created!');
+    })
+    .catch(err => {
+        console.error('Unable to connect to the database or sync models:', err);
+    });
 
 
 

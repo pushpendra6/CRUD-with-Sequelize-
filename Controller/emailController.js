@@ -7,20 +7,19 @@ const multer = require('multer');
 
 const sendEmail = async (req, res) => {
     try {
-        // const toEmail  = process.env.EMAIL_RECEIVER; // Use environment variable for recipient email
+        const toEmail  = req.body; 
 
         // Render EJS template to HTML string
         const templatePath = path.join(__dirname, '../views/email.ejs');
-        const html = await ejs.renderFile(templatePath, { name: 'User' }); // pass variables here
+        const html = await ejs.renderFile(templatePath); // pass variables here
 
         // Create transporter using Gmail SMTP with your Gmail email & password
         const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: 587, // or 465 for secure connection
+            service: 'gmail', 
             secure: false, // true for 465, false for other ports
                 auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASSWORD, 
+                user: process.env.EMAIL_USER, 
+                pass: process.env.EMAIL_PASS, 
             },
             tls:{
                 rejectUnauthorized: false // Allow self-signed certificates
@@ -28,11 +27,10 @@ const sendEmail = async (req, res) => {
         });
 
         const mailOptions = {
-            from: "shekhawatpss9783@gmail.com", 
-            to: "pushpendra97728@gmail.com",
+            from: process.env.EMAIL_USER, 
+            to: toEmail,
             subject: 'Test Email with EJS Template',
-            text: 'This is a test email sent using EJS template with Nodemailer.',
-            // html: html,
+            html: html,
         };
 
         // Send mail
@@ -60,6 +58,7 @@ const imageUpload = (req, res) => {
   const upload = multer({ storage: storage });
 
   const uploadSingle = upload.single('myFile');
+  //for multiple uploads, you can use:
     //const upload = upload.array('myFile',5);
     //const uplaod = upload.fields([
     //    { name: 'avatar', maxCount: 1 },
