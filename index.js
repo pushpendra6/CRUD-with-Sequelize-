@@ -24,7 +24,9 @@ app.use('/upload', emailRoute);
 app.use('/pagination', paginationRoutes);
 
 
-sequelize.sync() 
+//alter: false → don’t change columns or structure.
+//force: false → don’t drop and recreate the table.
+sequelize.sync({ alter: false, force: false }) 
     .then(() => {
         console.log('Database & tables created!');
     })
