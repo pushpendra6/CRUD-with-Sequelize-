@@ -1,6 +1,10 @@
 const User = require('../Models/userModel');
 const Post = require('../Models/postModel');
 const bcrypt =  require('bcrypt');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
+
 
 const getUser = async (req,res) => {
     try {
@@ -40,11 +44,15 @@ const getUserById = async (req, res) => {
     }
 };
 
+//login method with hashing and bcrypt & token using jwt
+const JWT_SECRET = process.env.JWT_SECRET;
+
 const login = async (req,res) => {
     console.log('in login')
-    const { email, password} = req.body
+    const { email, password } = req.body;
+    console.log(email, password);
     try{
-        const user  = await User.findOne({where:{ email: email} });
+        const user  = await User.findOne({where:{ email: email} , attributes: ['id', 'firstName', 'lastName', 'email', 'age', 'phone', 'password']});
         if (!user) {
 			return res
 				.status(404)
@@ -56,7 +64,18 @@ const login = async (req,res) => {
 	if (!isMatch) {
 		return res.status(401).json({ message: "Invalid password" });
 	}
-	res.status(200).json({  message: `Login successful. Welcome ${user.firstName} ${user.lastName}!` });
+    //generate JWT token
+    const userPayload = {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            age: user.age,
+            phone: user.phone
+        };
+    const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '90m' });
+
+	res.status(200).json({  message: `Login successful. Welcome ${user.firstName} ${user.lastName}!`, token: token });
 
     }catch(err){
         console.log(err);
@@ -64,17 +83,17 @@ const login = async (req,res) => {
 }
 
 
-const postUser = async (req,res) => {
+const addUser = async (req,res) => {
     console.log("in post");
-    const { firstName, lastName, email , password, age, phone} = req.body;
-    console.log(firstName,lastName,email,password,age,phone);
+    const { firstName, lastName, email , password, age, phone,role} = req.body;
+    
     try {
-        if( !firstName || !lastName  || !email || !password || !age  || !phone){
+        if( !firstName || !lastName  || !email || !password || !age  || !phone || !role){
             return res
 				.status(400)
 				.json({ message: "All fields are required" });
         }
-        const newUser = await User.create({firstName, lastName, email, password, age, phone });
+        const newUser = await User.create({firstName, lastName, email, password, age, phone ,role});
         res.status(201).json(newUser);
     } catch (error) {
         console.error('Error creating user:', error);
@@ -112,9 +131,47 @@ const deleteUser = async (req,res) => {
 }
 
 const updateUser = async (req,res) => {
-    
-    const { name } = req.body;
-    res.status(200).json( `${name} User Updated`);
+    try{
+        const { id} = req.user;
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        const { firstName, lastName, age, phone } = req.body;
+        
+        if (firstName !== undefined) user.firstName = firstName; 
+        if (lastName !== undefined) user.lastName = lastName; 
+        if (age !== undefined) user.age = age; 
+        if (phone !== undefined) user.phone = phone;
+
+        console.log('user.phone:',  user.phone);
+
+
+const nn = await user.update({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    age: user.age,
+    phone: user.phone
+} , {
+    where: { id: user.id }
+})
+
+console.log('Pushpendra',nn)
+
+        // await user.save();
+
+        res.status(200).json({
+            message: 'User updated successfully',
+            user
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Error updating user',
+            error: error.message
+        });
+    }
 }
 
 
@@ -135,7 +192,7 @@ const getAlluserWithPost = async (req, res) => {
 module.exports = {
     getUser,
     getUserById,
-    postUser,
+    addUser,
     deleteUser,
     updateUser,
     login,

@@ -1,6 +1,7 @@
 const express = require('express')
-const { getUserWithDeleted,getUser,postUser, deleteUser, updateUser, getUserById, login, getAlluserWithPost } =  require('../Controller/userController')
-const router = express.Router()
+const { getUserWithDeleted,getUser,addUser, deleteUser, updateUser, getUserById, login, getAlluserWithPost } =  require('../Controller/userController')
+const router = express.Router();
+const authenticateToken = require('../Middleware/auth');
 
 router
     .route('/getUser')
@@ -15,8 +16,8 @@ router
     .get(getUserById);
 
 router
-    .route('/postUser')
-    .post(postUser)
+    .route('/add')
+    .post(addUser)
 
 //login route
 router
@@ -31,8 +32,6 @@ router
     .route('/deleteUser/:id')
     .delete(deleteUser)
 
-router
-    .route('/updateUser')
-    .patch(updateUser)
+router.patch('/updateUser',authenticateToken,updateUser)   
 
 module.exports = router;

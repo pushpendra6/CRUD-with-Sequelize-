@@ -9,11 +9,11 @@ const PostModel = sequelize.define('Post', {
     },
     title: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
     },
     content: {
         type: DataTypes.TEXT,
-        allowNull: true
+        allowNull: false
     },
     userId: { // Foreign key
         type: DataTypes.INTEGER,

@@ -7,11 +7,17 @@ const multer = require('multer');
 
 const sendEmail = async (req, res) => {
     try {
-        const toEmail  = req.body; 
+        const { email:toEmail, firstName, lastName } = req.user; // email from JWT payload
+        if (!toEmail) {
+            return res.status(400).json({ message: 'Email not found in user payload.' });
+        }
 
         // Render EJS template to HTML string
         const templatePath = path.join(__dirname, '../views/email.ejs');
-        const html = await ejs.renderFile(templatePath); // pass variables here
+        const html = await ejs.renderFile(templatePath, {
+            firstName: firstName,
+            lastName: lastName
+        });
 
         // Create transporter using Gmail SMTP with your Gmail email & password
         const transporter = nodemailer.createTransport({
@@ -29,7 +35,7 @@ const sendEmail = async (req, res) => {
         const mailOptions = {
             from: process.env.EMAIL_USER, 
             to: toEmail,
-            subject: 'Test Email with EJS Template',
+            subject: "Email from Wooden Street ✅",
             html: html,
         };
 

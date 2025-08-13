@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getComments, getCommentsFromDB } = require('../Controller/paginationController');
+const { getComments, getCommentsFromDB } = require('../Controller/commentController');
 
 router
     .route('/:page')

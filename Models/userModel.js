@@ -47,14 +47,20 @@ const UserModel = sequelize.define('User', {
             const salt = bcrypt.genSaltSync(10); 
             const hashedPassword = bcrypt.hashSync(value, salt); 
             this.setDataValue('password', hashedPassword);
-    }
-    }
-}, {
+        }
+    },
+    role: {
+        type: DataTypes.STRING(10), 
+        allowNull: false,
+        defaultValue: 'user',  
+        validate:{      
+            isIn: [['user', 'admin']] 
+        }
+    } 
+ }, 
+    {
     tableName: 'user-Model',
-    timestamps: true,
-    paranoid: true,           // Enables soft delete (adds deletedAt)
-    deletedAt: 'deletedAt', 
-    
+    timestamps: false, 
 });
 
 module.exports = UserModel;
