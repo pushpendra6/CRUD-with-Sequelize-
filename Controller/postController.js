@@ -27,11 +27,30 @@ const createPost = async (req, res) => {
 //all posts
 
 const getAllPosts = async (req, res) => {
-    /// pagination
     console.log("in getpost  methods")
     try {
-        const posts = await PostModel.findAll();
-        res.status(200).json(posts);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        const offset = (page - 1) * limit;
+
+        // Fetch posts with count
+        const { count, rows } = await PostModel.findAndCountAll({
+            limit,
+            offset
+        });
+
+        // If no posts found
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "No posts found for this page." });
+        }
+
+        res.status(200).json({
+            currentPage: page,
+            totalPages: Math.ceil(count / limit),
+            totalPosts: count,
+            posts: rows
+        });
+
     } catch (err) {
         res.status(500).json({ error: 'Error fetching posts', details: err.message });
     }

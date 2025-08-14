@@ -160,18 +160,9 @@ const postComment = async (req, res) => {
 //delete comment of logged-in user
 const deleteComment = async (req, res) => {
     try {
-        const userId = req.user.id;
         const { commentId } = req.params;
-        console.log("Delete comment for user ID:- ", userId, "Comment ID:- ", commentId);
-        // Find the user's post
-        const post = await Post.findAll({ where: { userId } });
-        if (!post) {
-            return res.status(404).json({ error: 'No post found for this user.' });
-        }
-        const postIds = post.map(p => p.id);
-        // Find the comment and ensure it belongs to the post
         const comment = await Comments.findOne({
-            where: { id: commentId, postId: postIds }
+            where: { id: commentId }
         });
 
         if (!comment) {
