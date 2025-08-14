@@ -7,7 +7,7 @@ const { sequelize} = require('./Models/index')
 const postRoutes = require('./Routes/postRoutes');
 const app = express();
 const userRoute1 = require('./Routes/user1Routes');
-const paginationRoutes = require('./Routes/commentRoutes');
+const commentRoutes = require('./Routes/commentRoutes');
 const emailRoute = require('./Routes/emailRoute');
 
 app.use(express.json());
@@ -21,7 +21,7 @@ app.use('/cart', cartRoutes);
 app.use('/order', orderRoutes);
 app.use('/user1',userRoute1);
 app.use('/email', emailRoute);
-app.use('/pagination', paginationRoutes);
+app.use('/comment', commentRoutes);
 
 
 //alter: false → don’t change columns or structure.

@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { getComments, getCommentsFromDB } = require('../Controller/commentController');
+const { getComments, postComment, deleteComment , getCommentsFromDB ,getCommentsFromFile } = require('../Controller/commentController');
+const authenticateToken = require('../Middleware/auth');
 
-router
-    .route('/:page')
-    .get(getComments);
+router.get('/:page', authenticateToken , getComments);
+router.post('/add', authenticateToken, postComment);
+router.delete('/delete/:commentId', authenticateToken, deleteComment);
 
-router
-    .route('/db/:page')
-    .get(getCommentsFromDB);
+
+router.get('/db', getCommentsFromDB);
+router.get('/file/:page', getCommentsFromFile);
 
 module.exports = router;

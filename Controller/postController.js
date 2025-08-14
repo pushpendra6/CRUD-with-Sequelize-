@@ -1,6 +1,4 @@
 const PostModel = require('../Models/postModel'); 
-const UserModel = require('../Models/userModel'); 
-const { post } = require('../Routes/postRoutes');
 
 const createPost = async (req, res) => {
     console.log("in post create methods")
@@ -41,16 +39,39 @@ const getAllPosts = async (req, res) => {
 
 //only logined user posts
 const userPosts = async (req, res) => {
-    try {
+    try{
         const { id } = req.user;
-        // pagination 
-        const posts = await PostModel.findAll({ where: { userId : id } });
-        if (!posts) {
-            return res.status(404).json({ error: 'post not found' });
+
+        const page = parseInt(req.params.page) || 1;
+        const limit = 10;
+        // Validation
+        if (page < 1) {
+            return res.status(400).json({ error: "Page number must be 1 or greater." });
         }
-        res.status(200).json(posts);
+
+        const offset = (page - 1) * limit;
+
+        // Get paginated posts
+        const { count, rows } = await PostModel.findAndCountAll({
+            where: { userId: id },
+            limit: limit,
+            offset: offset
+        });
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "No posts found for this page." });
+        }
+
+        res.status(200).json({
+            page,
+            limit,
+            totalPosts: count,
+            totalPages: Math.ceil(count / limit),
+            data: rows
+        });
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching posts', details: error.message });
+        console.error(error);
+        res.status(500).json({ error: "Server error" });
     }
 
 };

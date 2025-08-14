@@ -7,7 +7,7 @@ const authMiddleware = require('../Middleware/auth');
 router.get('/allpost',getAllPosts);
 
 //get specific user posts
-router.get('/userpost', authMiddleware, userPosts);
+router.get('/userpost/:page', authMiddleware, userPosts);
 
 //delete specific user posts
 router.delete('/delete/:id', authMiddleware, deletePost);

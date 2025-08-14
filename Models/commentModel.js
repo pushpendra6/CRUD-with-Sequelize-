@@ -7,6 +7,7 @@ const Comments = sequelize.define(
         id: {
             type: DataTypes.INTEGER,
             allowNull: true, // since DB column allows NULL
+            autoIncrement: true,
             primaryKey: true
         },
         name: {
@@ -20,6 +21,14 @@ const Comments = sequelize.define(
         body: {
             type: DataTypes.STRING(542),
             allowNull: true
+        },
+        postId : {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        userId : {
+            type: DataTypes.INTEGER,
+            allowNull: false,
         }
     },
     {

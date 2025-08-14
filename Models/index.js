@@ -3,19 +3,37 @@ const User = require('./userModel');
 const Post = require('./postModel'); 
 const Cart = require('./cartModel');
 const Customer = require('./customerModel');
-const Order = require('./orderModel');  
+const Order = require('./orderModel');
+const Comment = require('./commentModel');  
 
-// Associations 1 to many
+// Associations user has many posts
 User.hasMany(Post, {
     foreignKey: 'userId',
     onDelete: 'CASCADE'
 });
-
 Post.belongsTo(User, {
     foreignKey: 'userId'
 });
 
+// Post has many comments
+Post.hasMany(Comment,{
+    foreignKey: 'postId',
+    onDelete: 'CASCADE'
+})
+Comment.belongsTo(Post, {
+    foreignKey: 'postId'
+});
 
+// User has many comments
+User.hasMany(Comment, {
+    foreignKey: 'userId',
+    onDelete: 'CASCADE'
+});
+Comment.belongsTo(User, {
+    foreignKey: 'userId'
+});
+
+//-----------------------------------------------------------------------------
 
 //One-to-One: Customer ↔ Cart
 Customer.hasOne(Cart, {

@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 const authenticateToken = (req, res, next) => {
-    console.log('in auth js');
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1]; 
     if (!token) {
@@ -11,7 +10,6 @@ const authenticateToken = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded; // userPayload from your login function
-        console.log('auth js completed');
         next();
     } catch (err) {
         return res.status(403).json({ message: "Invalid or expired token." });
