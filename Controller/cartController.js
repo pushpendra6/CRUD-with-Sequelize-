@@ -32,7 +32,7 @@ const createCartRaw = async (req, res) => {
         if (!customer) {
             return res.status(404).json({ message: 'Customer not found' });
         }
-        const [result] = await sequelize.query(
+        await sequelize.query(
             `
             INSERT INTO Carts (customerId, totalItems, totalPrice, createdAt, updatedAt)
             VALUES (:customerId, :totalItems, :totalPrice, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
